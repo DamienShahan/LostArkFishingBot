@@ -16,15 +16,15 @@ flag = "pulled"
 
 # template images
 # if needed, create your own template images
-template = cv2.imread("template.png", 0)
-poplavok = cv2.imread("poplavok.png", 0)
+template = cv2.imread("resources/template.png", 0)
+poplavok = cv2.imread("resources/poplavok.png", 0)
 
-print(strftime("%H:%M:%S", gmtime()), "starting a bot")
+print(strftime("%H:%M:%S", gmtime()), "starting the bot")
 time.sleep(5)
 
 while(1):
     if flag == "pulled":
-        print(strftime("%H:%M:%S", gmtime()), "throwing a fishing rod [1]")
+        print(strftime("%H:%M:%S", gmtime()), "casting fishing rod [1]")
         pyautogui.keyDown('e')
         time.sleep( random.uniform( 0.25, 0.55 ))
         pyautogui.keyUp('e')
@@ -43,7 +43,7 @@ while(1):
     # Based on the search results, either E is pressed or nothing happens and the cycle repeats
     if len(loc[0]) > 0:
         if flag == "thrown":  
-            print(strftime("%H:%M:%S", gmtime()), "Time to fish!")
+            print(strftime("%H:%M:%S", gmtime()), "found a fish")
             time.sleep(random.uniform(0.25, 1.0))
             pyautogui.keyDown('e')
             time.sleep( random.uniform( 0.25, 0.55 ))
@@ -55,11 +55,11 @@ while(1):
     poplavok_loc = numpy.where( poplavok_coordinates >= 0.7)
     
     if len(poplavok_loc[0]) == 0 and flag == "pulled":
-        print(strftime("%H:%M:%S", gmtime()), "throwing a fishing rod [2]")
+        print(strftime("%H:%M:%S", gmtime()), "casting fishing rod [2]")
         pyautogui.keyDown('e')
         time.sleep( random.uniform( 0.25, 0.55 ))
         pyautogui.keyUp('e')
         flag = "thrown"
         time.sleep( random.uniform(4.5, 6.5))
 
-    print(strftime("%H:%M:%S", gmtime()), "Not time yet!")
+    print(strftime("%H:%M:%S", gmtime()), "waiting for a fish")
