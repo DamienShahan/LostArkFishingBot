@@ -9,7 +9,7 @@ import win32gui
 # screen resolution
 # set the width and height to your resolution
 class screen:   
-    width = 2560
+    width = 3440
     height = 1440
 
 # variables
