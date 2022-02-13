@@ -7,14 +7,25 @@ import random
 import win32gui
 
 # screen resolution
-# set the weight and height to your resolution
+# set the width and height to your resolution
 class screen:   
-    weight = 2560
+    width = 2560
     height = 1440
 
+# variables
 flag = "pulled"
-
 counter = 1
+idletimer = 0
+
+# function to cast fishing rod ingame
+def castFishingRod(count):
+    print(strftime("%H:%M:%S", gmtime()), f"Casting fishing rod. Counter: {count}")
+
+    # Cast fishing rod ingame
+    pyautogui.keyDown('e')
+    time.sleep( random.uniform( 0.25, 0.55 ))
+    pyautogui.keyUp('e')
+    time.sleep( random.uniform(4.5, 6.5)) 
 
 # template images
 # if needed, create your own template images
@@ -25,45 +36,51 @@ print(strftime("%H:%M:%S", gmtime()), "Starting the bot in 5 seconds.")
 time.sleep(5)
 
 while(1):
+    idletimer = idletimer + 1
     if flag == "pulled":
-        print(strftime("%H:%M:%S", gmtime()), f"Casting fishing rod. Counter: {counter}")
-        pyautogui.keyDown('e')
-        time.sleep( random.uniform( 0.25, 0.55 ))
-        pyautogui.keyUp('e')
+        castFishingRod(counter)
         flag = "thrown"
         counter = counter + 1
-        time.sleep( random.uniform(4.5, 6.5))        
         
     # screenshot creation
-    image = pyautogui.screenshot(region=(screen.weight/2 - 100, screen.height/2 - 150, 200, 200))
+    image = pyautogui.screenshot(region=(screen.width/2 - 100, screen.height/2 - 150, 200, 200))
     image = cv2.cvtColor(numpy.array(image), 0)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # search pattern on screen
+    # search pattern on screen for exclamation point
     template_coordinates = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
     loc = numpy.where( template_coordinates >= 0.7)
 
     # Based on the search results, either E is pressed or nothing happens and the cycle repeats
-    if len(loc[0]) > 0:
-        if flag == "thrown":  
-            print(strftime("%H:%M:%S", gmtime()), "Found a fish.")
-            time.sleep(random.uniform(0.25, 1.0))
-            pyautogui.keyDown('e')
-            time.sleep( random.uniform( 0.25, 0.55 ))
-            pyautogui.keyUp('e')
-            flag = "pulled"
-            time.sleep(random.uniform(5.5, 7.5))
+    if len(loc[0]) > 0 and flag == "thrown":
+        print(strftime("%H:%M:%S", gmtime()), "Found a fish.")
+        idletimer = 0
+        time.sleep(random.uniform(0.25, 1.0))
 
+        # Caught fish, press e ingame to reel it in
+        pyautogui.keyDown('e')
+        time.sleep( random.uniform( 0.25, 0.55 ))
+        pyautogui.keyUp('e')
+
+        flag = "pulled"
+        time.sleep(random.uniform(5.5, 7.5))
+
+    # search pattern on screen for buoy
     poplavok_coordinates = cv2.matchTemplate(image, poplavok, cv2.TM_CCOEFF_NORMED)
     poplavok_loc = numpy.where( poplavok_coordinates >= 0.7)
     
     if len(poplavok_loc[0]) == 0 and flag == "pulled":
-        print(strftime("%H:%M:%S", gmtime()), f"Casting fishing rod. Counter: {counter}")
-        pyautogui.keyDown('e')
-        time.sleep( random.uniform( 0.25, 0.55 ))
-        pyautogui.keyUp('e')
+        castFishingRod(counter)
         flag = "thrown"
         counter = counter + 1
-        time.sleep( random.uniform(4.5, 6.5))
 
-    print(strftime("%H:%M:%S", gmtime()), "Waiting for a fish.")
+    print(strftime("%H:%M:%S", gmtime()), f"Waiting for a fish. Idle timer: {idletimer}. Recast at 500.")
+
+    if idletimer == 500:
+        print(f"Idle timer reached 500. Recasting now.")
+        idletimer = 0
+
+        # Recast
+        castFishingRod(counter)
+        flag = "thrown"
+        counter = counter + 1
