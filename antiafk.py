@@ -7,13 +7,11 @@ import random
 import win32gui
 
 # screen resolution
-# set the width and height to your resolution
-class screen:  
-    #width = 3440
-    #width = 2560
-    #height = 1440
-    width = 2560
-    height = 1440
+screenWidth, screenHeight= pyautogui.size()
+
+# Backup hardcoded width and height
+#screenWidth = 2560
+#screenHeight = 1440
 
 # variables
 flag = "pulled"
@@ -28,12 +26,76 @@ def castFishingRod(count):
     pyautogui.keyDown('e')
     time.sleep( random.uniform( 0.25, 0.55 ))
     pyautogui.keyUp('e')
-    time.sleep( random.uniform(4.5, 6.5)) 
+    time.sleep( random.uniform(4.5, 6.5))
+
+# Function with all steps to repair the fishing rod through the pet inventory
+def repairFishingRod(screenWidth, screenHeight):
+    # Open pet inventory
+    print(strftime("%H:%M:%S", gmtime()), "Opening pet inventory (ALT + P).")
+    pyautogui.keyDown('alt')
+    pyautogui.keyDown('p')
+    pyautogui.keyUp('p')
+    pyautogui.keyUp('alt')
+
+    # Sleep random amount of time
+    time.sleep(random.uniform(2.0, 3.0))
+
+    # ClRepair Button offset
+    print(strftime("%H:%M:%S", gmtime()), "Clicking on Pet Function: remote repair.")
+    xOffset = 0.674
+    yOffset = 0.641
+    moveToX1 = round(screenWidth * xOffset)
+    moveToY1 = round(screenHeight * yOffset)
+    pyautogui.click(x=moveToX1, y=moveToY1, clicks=0, button='left')
+    time.sleep(random.uniform(1.0, 1.5))
+    pyautogui.click(x=moveToX1, y=moveToY1, clicks=1, button='left')
+
+    # Sleep random amount of time
+    time.sleep(random.uniform(2.0, 3.0))
+
+    # Repair All offset
+    print(strftime("%H:%M:%S", gmtime()), "Clicking on Repair All button.")
+    xOffset = 0.384
+    yOffset = 0.688
+    moveToX2 = round(screenWidth * xOffset)
+    moveToY2 = round(screenHeight * yOffset)
+    pyautogui.click(x=moveToX2, y=moveToY2, clicks=0, button='left')
+    time.sleep(random.uniform(1.0, 1.5))
+    pyautogui.click(x=moveToX2, y=moveToY2, clicks=1, button='left')
+
+    # Sleep random amount of time
+    time.sleep(random.uniform(2.0, 3.0))
+
+    # Repair OK offset
+    print(strftime("%H:%M:%S", gmtime()), "Clicking on OK button.")
+    xOffset = 0.457
+    yOffset = 0.578
+    moveToX3 = round(screenWidth * xOffset)
+    moveToY3 = round(screenHeight * yOffset)
+    pyautogui.click(x=moveToX3, y=moveToY3, clicks=0, button='left')
+    time.sleep(random.uniform(1.0, 1.5))
+    pyautogui.click(x=moveToX3, y=moveToY3, clicks=1, button='left')
+
+    # Sleep random amount of time
+    time.sleep(random.uniform(4.0, 5.0))
+
+    # Press ESC
+    print(strftime("%H:%M:%S", gmtime()), "Pressing ESC, closing repair window.")
+    pyautogui.keyDown('esc')
+    pyautogui.keyUp('esc')
+
+    # Sleep random amount of time
+    time.sleep(random.uniform(2.0, 3.0))
+
+    # Press ESC
+    print(strftime("%H:%M:%S", gmtime()), "Pressing ESC, closing pet window.")
+    pyautogui.keyDown('esc')
+    pyautogui.keyUp('esc')
 
 # template images
 # if needed, create your own template images
-template = cv2.imread("resources/template.png", 0)
-poplavok = cv2.imread("resources/poplavok.png", 0)
+template = cv2.imread(f"resources/{screenHeight}/template.png", 0)
+poplavok = cv2.imread(f"resources/{screenHeight}/poplavok.png", 0)
 
 print(strftime("%H:%M:%S", gmtime()), "Starting the bot in 5 seconds.")
 time.sleep(5)
@@ -46,7 +108,7 @@ while(1):
         counter = counter + 1
         
     # screenshot creation
-    image = pyautogui.screenshot(region=(screen.width/2 - 100, screen.height/2 - 150, 200, 200))
+    image = pyautogui.screenshot(region=(screenWidth/2 - 100, screenHeight/2 - 150, 200, 200))
     image = cv2.cvtColor(numpy.array(image), 0)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -72,6 +134,12 @@ while(1):
         print(f"Waiting {waittime} seconds to recast.")
         time.sleep(waittime)
         flag = "pulled"
+
+    # Repair if modulo 50 and either found a fish, or fully idle
+    if counter % 50 == 0 and (idletimer == 500 or flag == "pulled"):
+        print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now. flag: {flag}")
+        repairFishingRod(screenWidth, screenHeight)
+        counter = counter + 1
 
     # search pattern on screen for buoy
     poplavok_coordinates = cv2.matchTemplate(image, poplavok, cv2.TM_CCOEFF_NORMED)
