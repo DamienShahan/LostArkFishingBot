@@ -5,13 +5,14 @@ import time
 from time import gmtime, strftime
 import random
 import win32gui
+import yaml
 
 # screen resolution
 screenWidth, screenHeight= pyautogui.size()
 
-# Backup hardcoded width and height
-#screenWidth = 2560
-#screenHeight = 1440
+# Keybindings
+with open("resources/keybindings.yaml", "r") as yamlfile:
+    keybindings = yaml.safe_load(yamlfile)
 
 # variables
 flag = "pulled"
@@ -23,19 +24,25 @@ def castFishingRod(count):
     print(strftime("%H:%M:%S", gmtime()), f"Casting fishing rod. Counter: {count}")
 
     # Cast fishing rod ingame
-    pyautogui.keyDown('e')
+    pyautogui.keyUp(keybindings['fishing'])
     time.sleep( random.uniform( 0.25, 0.55 ))
-    pyautogui.keyUp('e')
+    pyautogui.keyUp(keybindings['fishing'])
     time.sleep( random.uniform(4.5, 6.5))
 
 # Function with all steps to repair the fishing rod through the pet inventory
 def repairFishingRod(screenWidth, screenHeight):
-    # Open pet inventory
-    print(strftime("%H:%M:%S", gmtime()), "Opening pet inventory (ALT + P).")
-    pyautogui.keyDown('alt')
-    pyautogui.keyDown('p')
-    pyautogui.keyUp('p')
-    pyautogui.keyUp('alt')
+    if keybindings['pet-inventory-modifier'] != None and keybindings['pet-inventory-modifier'] != '':
+        print(strftime("%H:%M:%S", gmtime()), f"Opening pet inventory ({keybindings['pet-inventory-modifier'].upper()} + {keybindings['pet-inventory']}).")
+        # Open pet inventory
+        pyautogui.keyDown(keybindings['pet-inventory-modifier'])
+        pyautogui.keyDown(keybindings['pet-inventory'])
+        pyautogui.keyUp(keybindings['pet-inventory'])
+        pyautogui.keyUp(keybindings['pet-inventory-modifier'])
+    else:
+        print(strftime("%H:%M:%S", gmtime()), f"Opening pet inventory ({keybindings['pet-inventory']}).")
+        # Open pet inventory
+        pyautogui.keyDown(keybindings['pet-inventory'])
+        pyautogui.keyUp(keybindings['pet-inventory'])
 
     # Sleep random amount of time
     time.sleep(random.uniform(2.0, 3.0))
@@ -123,9 +130,9 @@ while(1):
         time.sleep(random.uniform(0.25, 1.0))
 
         # Caught fish, press e ingame to reel it in
-        pyautogui.keyDown('e')
+        pyautogui.keyDown(keybindings['fishing'])
         time.sleep( random.uniform( 0.25, 0.55 ))
-        pyautogui.keyUp('e')
+        pyautogui.keyDown(keybindings['fishing'])
 
         flag = "pulled"
 
