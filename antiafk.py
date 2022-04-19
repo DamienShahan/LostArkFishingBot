@@ -40,7 +40,7 @@ def repairFishingRod(screenWidth, screenHeight):
     # Sleep random amount of time
     time.sleep(random.uniform(2.0, 3.0))
 
-    # ClRepair Button offset
+    # Small repair Button offset
     print(strftime("%H:%M:%S", gmtime()), "Clicking on Pet Function: remote repair.")
     xOffset = 0.674
     yOffset = 0.641
@@ -137,7 +137,7 @@ while(1):
 
     # Repair if modulo 50 and either found a fish, or fully idle
     if counter % 50 == 0 and (idletimer == 500 or flag == "pulled"):
-        print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now. flag: {flag}")
+        print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now.")
         repairFishingRod(screenWidth, screenHeight)
         counter = counter + 1
 

@@ -132,7 +132,7 @@ while(1):
 
     # Repair if modulo 50 and either found a fish, or fully idle
     if counter % 50 == 0 and (idletimer == 500 or flag == "pulled"):
-        print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now. flag: {flag}")
+        print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now.")
         repairFishingRod(screenWidth, screenHeight)
         counter = counter + 1
 
@@ -145,7 +145,7 @@ while(1):
         flag = "thrown"
         counter = counter + 1
 
-    print(strftime("%H:%M:%S", gmtime()), f"Waiting for a fish. Idle timer: {idletimer}. Recast at 500. flag: {flag}")
+    print(strftime("%H:%M:%S", gmtime()), f"Waiting for a fish. Idle timer: {idletimer}. Recast at 500.")
 
     if idletimer == 500:
         print(f"Idle timer reached 500. Recasting now.")
