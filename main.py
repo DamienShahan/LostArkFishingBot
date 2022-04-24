@@ -138,7 +138,7 @@ while(1):
         time.sleep(random.uniform(5.5, 7.5))
 
     # Repair if modulo 50 and either found a fish, or fully idle
-    if counter % 50 != 0 and (idletimer == 500 or flag == "pulled"):
+    if counter % 50 == 0 and (idletimer == 500 or flag == "pulled"):
         print(strftime("%H:%M:%S", gmtime()), f"Counter: {counter}. Repairing now.")
         repairFishingRod(screenWidth, screenHeight)
         counter = counter + 1
