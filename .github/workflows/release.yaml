@@ -28,14 +28,17 @@ jobs:
         path: .
         spec: ${{ matrix.script_name }}.spec
 
+    - name: Zip package
+      run: zip --junk-paths --password ${{ secrets.ZIP_PASSWORD }} ${{ matrix.script_name }}.zip dist/windows/${{ matrix.script_name }}.exe
+
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.script_name }}
-        path: dist/windows/${{ matrix.script_name }}.exe
+        path: ${{ matrix.script_name }}.zip
 
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          dist/windows/${{ matrix.script_name }}.exe
+          ${{ matrix.script_name }}.zip
